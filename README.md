@@ -19,3 +19,28 @@
 - Провести сравнительный анализ быстродействия отрисовки данных на FC и на обычных компонентах
 
 Дедлайн - 4 декабря
+
+# required-task-6
+
+## Project setup
+```
+yarn install
+```
+
+### Compiles and hot-reloads for development
+```
+yarn serve
+```
+
+### Compiles and minifies for production
+```
+yarn build
+```
+
+### Lints and fixes files
+```
+yarn lint
+```
+
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
