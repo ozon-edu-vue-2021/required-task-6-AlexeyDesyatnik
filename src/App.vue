@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <h1>Hi there</h1>
+    <p v-for="row in rows" :key="row.id">{{ row }}</p>
   </div>
 </template>
 
@@ -8,6 +9,15 @@
 export default {
   name: "App",
   components: {},
+  async created() {
+    const res = await fetch(`https://jsonplaceholder.typicode.com/comments`);
+    this.rows = await res.json();
+  },
+  data() {
+    return {
+      rows: [],
+    };
+  },
 };
 </script>
 
