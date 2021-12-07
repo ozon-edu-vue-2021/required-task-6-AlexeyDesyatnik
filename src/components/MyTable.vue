@@ -1,5 +1,6 @@
 <script lang="jsx">
 import _ from 'lodash';
+import MyTablePaginator from './MyTablePaginator.vue';
 
 export default {
   name: 'my-table',
@@ -132,7 +133,10 @@ export default {
           <thead>{...head}</thead>
           <tbody>{...rows}</tbody>
         </table>
-        <div>Total pages: {this.totalPages}</div>
+        <MyTablePaginator
+          currentPage={this.currentPage}
+          totalPages={this.totalPages}
+        />
       </div>
     );
   },
