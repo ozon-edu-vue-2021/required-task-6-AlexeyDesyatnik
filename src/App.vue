@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <h1>Hi there</h1>
-    <my-table></my-table>
+    <my-table :rows="rows"></my-table>
   </div>
 </template>
 
