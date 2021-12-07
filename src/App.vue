@@ -1,17 +1,24 @@
 <template>
   <div id="app">
     <h1>Hi there</h1>
-    <my-table :rows="rows"></my-table>
+    <my-table :rows="rows">
+      <my-table-column prop="id" title="ID" />
+      <my-table-column prop="postId" title="Post ID" />
+      <my-table-column prop="email" title="Email" />
+      <my-table-column prop="name" title="Name" />
+    </my-table>
   </div>
 </template>
 
 <script>
 import MyTable from './components/MyTable.vue';
+import MyTableColumn from './components/MyTableColumn.vue';
 
 export default {
   name: 'App',
   components: {
     MyTable,
+    MyTableColumn,
   },
   async created() {
     const res = await fetch(`https://jsonplaceholder.typicode.com/comments`);
