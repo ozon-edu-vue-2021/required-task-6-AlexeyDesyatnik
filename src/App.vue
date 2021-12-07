@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <my-table :rows="rows">
+    <my-table :rows="rows" :paginationEnabled="true" :rowsPerPage="7">
       <my-table-column prop="id" title="ID">
         <template #body="{ row }">
           <div class="center">{{ row.id }}</div>

@@ -8,10 +8,19 @@ export default {
       type: Array,
       default: () => [],
     },
+    paginationEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    rowsPerPage: {
+      type: Number,
+      default: 10,
+    },
   },
   data: () => ({
     sortProp: '',
     sortDirection: '',
+    currentPage: 1,
   }),
   computed: {
     sortedRows() {
@@ -24,6 +33,20 @@ export default {
       }
 
       return result;
+    },
+    currentPageRows() {
+      if (!this.paginationEnabled) {
+        return this.sortedRows;
+      }
+      const startIndex = (this.rowsPerPage - 1) * this.currentPage;
+      return _.slice(
+        this.sortedRows,
+        startIndex,
+        startIndex + this.rowsPerPage
+      );
+    },
+    totalPages() {
+      return Math.ceil(this.rows.length / this.rowsPerPage);
     },
   },
   methods: {
@@ -89,7 +112,7 @@ export default {
       return cells;
     },
     renderRows(h, columnOptions) {
-      const rows = this.sortedRows.map((row, index) => {
+      const rows = this.currentPageRows.map((row, index) => {
         return (
           <tr key={row.id || index}>
             {...this.renderCells(h, row, columnOptions)}
@@ -104,10 +127,13 @@ export default {
     const head = this.renderHead(h, columnOptions);
     const rows = this.renderRows(h, columnOptions);
     return (
-      <table>
-        <thead>{...head}</thead>
-        <tbody>{...rows}</tbody>
-      </table>
+      <div>
+        <table>
+          <thead>{...head}</thead>
+          <tbody>{...rows}</tbody>
+        </table>
+        <div>Total pages: {this.totalPages}</div>
+      </div>
     );
   },
 };
