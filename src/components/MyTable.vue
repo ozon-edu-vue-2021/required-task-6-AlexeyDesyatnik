@@ -1,4 +1,6 @@
 <script lang="jsx">
+import _ from 'lodash';
+
 export default {
   name: 'my-table',
   props: {
@@ -7,7 +9,37 @@ export default {
       default: () => [],
     },
   },
+  data: () => ({
+    sortProp: '',
+    sortDirection: '',
+  }),
+  computed: {
+    sortedRows() {
+      let result;
+
+      if (!this.sortProp) {
+        result = this.rows;
+      } else {
+        result = _.orderBy(this.rows, [this.sortProp], [this.sortDirection]);
+      }
+
+      return result;
+    },
+  },
   methods: {
+    toggleSort(prop) {
+      if (prop === this.sortProp) {
+        if (this.sortDirection === 'asc') {
+          this.sortDirection = 'desc';
+        } else {
+          this.sortDirection = '';
+          this.sortProp = '';
+        }
+      } else {
+        this.sortProp = prop;
+        this.sortDirection = 'asc';
+      }
+    },
     getColumnOptions() {
       const columns = this.$slots.default.filter(
         (item) =>
@@ -22,12 +54,27 @@ export default {
       return options;
     },
     renderHead(h, columnOptions) {
+      const { sortProp, sortDirection } = this;
+
       const head = columnOptions.map((column) => {
         const title = column.scopedSlots.title
           ? column.scopedSlots.title()
           : column.title;
-        const headCell = <th key={column.prop}>{title}</th>;
-        return headCell;
+        let sortIcon = 'sort';
+        if (sortProp === column.prop) {
+          sortIcon =
+            sortDirection === 'asc' ? 'sort-alpha-down' : 'sort-alpha-down-alt';
+        }
+        return (
+          <th key={column.prop}>
+            <span>{title}</span>
+            <font-awesome-icon
+              class="sortIcon"
+              icon={sortIcon}
+              on={{ click: () => this.toggleSort(column.prop) }}
+            />
+          </th>
+        );
       });
       return head;
     },
@@ -37,13 +84,12 @@ export default {
         const body = column.scopedSlots.body
           ? column.scopedSlots.body({ row })
           : data;
-        const bodyCell = <td key={column.prop}>{body}</td>;
-        return bodyCell;
+        return <td key={column.prop}>{body}</td>;
       });
       return cells;
     },
     renderRows(h, columnOptions) {
-      const rows = this.rows.map((row, index) => {
+      const rows = this.sortedRows.map((row, index) => {
         return (
           <tr key={row.id || index}>
             {...this.renderCells(h, row, columnOptions)}
@@ -66,3 +112,27 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+th {
+  background-color: bisque;
+}
+
+td,
+th {
+  padding: 0.5em;
+}
+
+tr:nth-child(even) {
+  background-color: rgb(253, 247, 239);
+}
+
+.sortIcon {
+  margin-left: 8px;
+  margin-right: 24px;
+}
+
+.sortIcon:hover {
+  cursor: pointer;
+}
+</style>

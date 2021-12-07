@@ -1,12 +1,17 @@
 <template>
   <div id="app">
     <my-table :rows="rows">
-      <my-table-column prop="id" title="ID" />
-      <my-table-column prop="postId" title="Post ID" />
-      <my-table-column prop="email">
-        <template #title>
-          <i>Email</i>
+      <my-table-column prop="id" title="ID">
+        <template #body="{ row }">
+          <div class="center">{{ row.id }}</div>
         </template>
+      </my-table-column>
+      <my-table-column prop="postId" title="Post ID">
+        <template #body="{ row }">
+          <div class="center">{{ row.postId }}</div>
+        </template>
+      </my-table-column>
+      <my-table-column prop="email" title="Email">
         <template #body="{ row }">
           <a :href="`mailto:${row.email}`">{{ row.email }}</a>
         </template>
@@ -41,10 +46,10 @@ export default {
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+}
+
+.center {
+  text-align: center;
 }
 </style>
