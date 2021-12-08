@@ -39,7 +39,7 @@ export default {
       if (!this.paginationEnabled) {
         return this.sortedRows;
       }
-      const startIndex = (this.rowsPerPage - 1) * this.currentPage;
+      const startIndex = (this.currentPage - 1) * this.rowsPerPage;
       return _.slice(
         this.sortedRows,
         startIndex,
@@ -122,6 +122,12 @@ export default {
       });
       return rows;
     },
+    openPage(pageNumber) {
+      if (pageNumber < 1 || pageNumber > this.totalPages) {
+        return;
+      }
+      this.currentPage = pageNumber;
+    },
   },
   render(h) {
     const columnOptions = this.getColumnOptions();
@@ -136,6 +142,7 @@ export default {
         <MyTablePaginator
           currentPage={this.currentPage}
           totalPages={this.totalPages}
+          on={{ openPage: this.openPage }}
         />
       </div>
     );

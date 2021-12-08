@@ -38,23 +38,66 @@ export default {
       ];
     },
   },
-  render() {
-    const pageNumbers = this.visiblePageNumbers.map((number) => {
-      return (
-        <span
-          class={['pageControl', { activePage: number === this.currentPage }]}
-        >
-          {number}
+  methods: {
+    renderBackControls() {
+      const { openPage } = this.$listeners;
+      return this.currentPage > 1 ? (
+        <span>
+          <span class="pageControl" on={{ click: () => openPage(1) }}>
+            {'<<'}
+          </span>
+          <span
+            class="pageControl"
+            on={{ click: () => openPage(this.currentPage - 1) }}
+          >
+            {'<'}
+          </span>
         </span>
+      ) : (
+        ''
       );
-    });
+    },
+    renderForwardControls() {
+      const { openPage } = this.$listeners;
+      return this.currentPage < this.totalPages ? (
+        <span>
+          <span
+            class="pageControl"
+            on={{ click: () => openPage(this.currentPage + 1) }}
+          >
+            {'>'}
+          </span>
+          <span
+            class="pageControl"
+            on={{ click: () => openPage(this.totalPages) }}
+          >
+            {'>>'}
+          </span>
+        </span>
+      ) : (
+        ''
+      );
+    },
+    renderPageNumbers() {
+      const { openPage } = this.$listeners;
+      return this.visiblePageNumbers.map((number) => {
+        return (
+          <span
+            class={['pageControl', { activePage: number === this.currentPage }]}
+            on={{ click: () => openPage(number) }}
+          >
+            {number}
+          </span>
+        );
+      });
+    },
+  },
+  render() {
     return (
       <div class="pagination">
-        <span class="pageControl">{'<<'}</span>
-        <span class="pageControl">{'<'}</span>
-        {...pageNumbers}
-        <span class="pageControl">{'>'}</span>
-        <span class="pageControl">{'>>'}</span>
+        {this.renderBackControls()}
+        {...this.renderPageNumbers()}
+        {this.renderForwardControls()}
       </div>
     );
   },
