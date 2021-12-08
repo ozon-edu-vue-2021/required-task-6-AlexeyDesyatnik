@@ -1,6 +1,7 @@
 <script lang="jsx">
 import _ from 'lodash';
 import MyTablePaginator from './MyTablePaginator.vue';
+import FilterDropdown from './FilterDropdown.vue';
 
 export default {
   name: 'my-table',
@@ -21,6 +22,8 @@ export default {
   data: () => ({
     sortProp: '',
     sortDirection: '',
+    filterProp: '',
+    filterText: '',
     currentPage: 1,
   }),
   computed: {
@@ -31,6 +34,12 @@ export default {
         result = this.rows;
       } else {
         result = _.orderBy(this.rows, [this.sortProp], [this.sortDirection]);
+      }
+
+      if (this.filterText) {
+        result = result.filter(
+          (row) => String(row[this.filterProp]).search(this.filterText) > -1
+        );
       }
 
       return result;
@@ -65,6 +74,13 @@ export default {
         this.sortDirection = 'asc';
       }
     },
+    openFilterTooltip(prop = '') {
+      this.filterProp = prop;
+      this.filterText = '';
+    },
+    setFilterText(e) {
+      this.filterText = e.target.value;
+    },
     getColumnOptions() {
       const columns = this.$slots.default.filter(
         (item) =>
@@ -78,8 +94,8 @@ export default {
       );
       return options;
     },
-    renderHead(h, columnOptions) {
-      const { sortProp, sortDirection } = this;
+    renderHead(columnOptions) {
+      const { sortProp, sortDirection, filterProp, filterText } = this;
 
       const head = columnOptions.map((column) => {
         const title = column.scopedSlots.title
@@ -98,12 +114,22 @@ export default {
               icon={sortIcon}
               on={{ click: () => this.toggleSort(column.prop) }}
             />
+            <FilterDropdown
+              columnProp={column.prop}
+              shown={column.prop === filterProp}
+              filterText={filterText}
+              on={{
+                openFilterTooltip: () => this.openFilterTooltip(column.prop),
+                closeFilterTooltip: () => this.openFilterTooltip(),
+                setFilterText: this.setFilterText,
+              }}
+            />
           </th>
         );
       });
       return head;
     },
-    renderCells(h, row, columnOptions) {
+    renderCells(row, columnOptions) {
       const cells = columnOptions.map((column) => {
         const data = row[column.prop];
         const body = column.scopedSlots.body
@@ -113,11 +139,11 @@ export default {
       });
       return cells;
     },
-    renderRows(h, columnOptions) {
+    renderRows(columnOptions) {
       const rows = this.currentPageRows.map((row, index) => {
         return (
           <tr key={row.id || index}>
-            {...this.renderCells(h, row, columnOptions)}
+            {...this.renderCells(row, columnOptions)}
           </tr>
         );
       });
@@ -130,21 +156,26 @@ export default {
       this.currentPage = pageNumber;
     },
   },
-  render(h) {
+  render() {
     const columnOptions = this.getColumnOptions();
-    const head = this.renderHead(h, columnOptions);
-    const rows = this.renderRows(h, columnOptions);
+    const head = this.renderHead(columnOptions);
+    const rows = this.renderRows(columnOptions);
+    const paginator = this.paginationEnabled ? (
+      <MyTablePaginator
+        currentPage={this.currentPage}
+        totalPages={this.totalPages}
+        on={{ openPage: this.openPage }}
+      />
+    ) : (
+      ''
+    );
     return (
       <div>
         <table>
           <thead>{...head}</thead>
           <tbody>{...rows}</tbody>
         </table>
-        <MyTablePaginator
-          currentPage={this.currentPage}
-          totalPages={this.totalPages}
-          on={{ openPage: this.openPage }}
-        />
+        {paginator}
       </div>
     );
   },
