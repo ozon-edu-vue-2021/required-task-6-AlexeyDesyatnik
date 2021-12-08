@@ -8,9 +8,12 @@ import {
   faSortAlphaDownAlt,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import VTooltipPlugin from 'v-tooltip';
+import 'v-tooltip/dist/v-tooltip.css';
+
+Vue.use(VTooltipPlugin);
 
 library.add(faSort, faSortAlphaDown, faSortAlphaDownAlt);
-
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 Vue.config.productionTip = false;
