@@ -52,6 +52,7 @@ export default {
   },
   methods: {
     toggleSort(prop) {
+      this.currentPage = 1;
       if (prop === this.sortProp) {
         if (this.sortDirection === 'asc') {
           this.sortDirection = 'desc';
