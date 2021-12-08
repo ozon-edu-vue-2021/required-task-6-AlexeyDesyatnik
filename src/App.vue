@@ -1,10 +1,34 @@
 <template>
   <div id="app">
+    <div class="controls">
+      <p>
+        <input
+          type="checkbox"
+          id="paginationEnabled"
+          v-model="paginationEnabled"
+        />
+        <label for="paginationEnabled">Пагинация </label>
+      </p>
+      <p>
+        <input type="checkbox" id="infiniteScroll" v-model="infiniteScroll" />
+        <label for="infiniteScroll"
+          >Бесконечный скролл при включённой пагинации
+        </label>
+      </p>
+      <p>
+        <label for="rowsPerPage">Строк на страницу:</label>
+        <select v-model="rowsPerPage">
+          <option :value="10">10</option>
+          <option :value="25">25</option>
+          <option :value="50">50</option>
+        </select>
+      </p>
+    </div>
     <my-table
       :rows="rows"
-      :paginationEnabled="true"
-      :infiniteScroll="true"
-      :rowsPerPage="10"
+      :paginationEnabled="paginationEnabled"
+      :infiniteScroll="infiniteScroll"
+      :rowsPerPage="rowsPerPage"
     >
       <my-table-column prop="id" title="ID">
         <template #body="{ row }">
@@ -43,6 +67,9 @@ export default {
   data() {
     return {
       rows: [],
+      paginationEnabled: false,
+      infiniteScroll: false,
+      rowsPerPage: 10,
     };
   },
 };
@@ -56,5 +83,9 @@ export default {
 
 .center {
   text-align: center;
+}
+
+.controls {
+  margin-bottom: 20px;
 }
 </style>
