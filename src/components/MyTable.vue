@@ -56,7 +56,7 @@ export default {
       );
     },
     totalPages() {
-      return Math.ceil(this.rows.length / this.rowsPerPage);
+      return Math.ceil(this.sortedRows.length / this.rowsPerPage);
     },
   },
   methods: {
