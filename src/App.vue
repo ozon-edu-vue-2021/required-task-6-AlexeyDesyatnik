@@ -1,6 +1,11 @@
 <template>
   <div id="app">
-    <my-table :rows="rows" :paginationEnabled="true">
+    <my-table
+      :rows="rows"
+      :paginationEnabled="true"
+      :infiniteScroll="true"
+      :rowsPerPage="10"
+    >
       <my-table-column prop="id" title="ID">
         <template #body="{ row }">
           <div class="center">{{ row.id }}</div>

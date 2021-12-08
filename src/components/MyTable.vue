@@ -14,6 +14,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    infiniteScroll: {
+      type: Boolean,
+      default: false,
+    },
     rowsPerPage: {
       type: Number,
       default: 10,
@@ -27,7 +31,7 @@ export default {
     currentPage: 1,
   }),
   computed: {
-    sortedRows() {
+    processedRows() {
       let result;
 
       if (!this.sortProp) {
@@ -46,17 +50,15 @@ export default {
     },
     currentPageRows() {
       if (!this.paginationEnabled) {
-        return this.sortedRows;
+        return this.processedRows;
       }
-      const startIndex = (this.currentPage - 1) * this.rowsPerPage;
-      return _.slice(
-        this.sortedRows,
-        startIndex,
-        startIndex + this.rowsPerPage
-      );
+      const currentPageBegin = (this.currentPage - 1) * this.rowsPerPage;
+      const begin = this.infiniteScroll ? 0 : currentPageBegin;
+      const end = currentPageBegin + this.rowsPerPage;
+      return _.slice(this.processedRows, begin, end);
     },
     totalPages() {
-      return Math.ceil(this.sortedRows.length / this.rowsPerPage);
+      return Math.ceil(this.processedRows.length / this.rowsPerPage);
     },
   },
   methods: {
@@ -149,26 +151,47 @@ export default {
       });
       return rows;
     },
+    renderInfPager() {
+      const directives = [
+        {
+          name: 'detect-viewport',
+          value: {
+            callback: this.openNextPage,
+          },
+        },
+      ];
+
+      return <div {...{ directives }} />;
+    },
     openPage(pageNumber) {
       if (pageNumber < 1 || pageNumber > this.totalPages) {
         return;
       }
       this.currentPage = pageNumber;
     },
+    openNextPage() {
+      console.log('ADDING NEXT PAGE');
+      this.currentPage++;
+    },
   },
   render() {
     const columnOptions = this.getColumnOptions();
     const head = this.renderHead(columnOptions);
     const rows = this.renderRows(columnOptions);
-    const paginator = this.paginationEnabled ? (
-      <MyTablePaginator
-        currentPage={this.currentPage}
-        totalPages={this.totalPages}
-        on={{ openPage: this.openPage }}
-      />
-    ) : (
-      ''
-    );
+    let paginator = '';
+    if (this.paginationEnabled) {
+      if (!this.infiniteScroll) {
+        paginator = (
+          <MyTablePaginator
+            currentPage={this.currentPage}
+            totalPages={this.totalPages}
+            on={{ openPage: this.openPage }}
+          />
+        );
+      } else {
+        paginator = this.renderInfPager();
+      }
+    }
     return (
       <div>
         <table>

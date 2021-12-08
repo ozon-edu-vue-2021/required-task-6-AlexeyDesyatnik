@@ -12,11 +12,13 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import VTooltipPlugin from 'v-tooltip';
 import 'v-tooltip/dist/v-tooltip.css';
+import { Directive } from '@/directives/detect-viewport';
 
 Vue.use(VTooltipPlugin);
 
 library.add(faSort, faSortAlphaDown, faSortAlphaDownAlt, faFilter, faTimes);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
+Vue.directive('detect-viewport', Directive);
 
 Vue.config.productionTip = false;
 
